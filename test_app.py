@@ -12,4 +12,6 @@ def client():
 def test_home_page(client):
     response = client.get('/')
     assert response.status_code == 200
-    assert response.data.decode('utf-8') == 'Hello, DevOps Pipeline!'
+    data = response.get_json()
+    assert data["status"] == "success"
+    assert data["message"] == "DevOps CI/CD Pipeline App is Running!"
