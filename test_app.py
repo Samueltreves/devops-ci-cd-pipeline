@@ -15,3 +15,11 @@ def test_home_page(client):
     data = response.get_json()
     assert data["status"] == "success"
     assert data["message"] == "DevOps CI/CD Pipeline App is Running!"
+
+
+def test_about_page(client):
+    response = client.get('/about')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["version"] == "1.0.0"
+    assert data["author"] == "Samuel Treves"
