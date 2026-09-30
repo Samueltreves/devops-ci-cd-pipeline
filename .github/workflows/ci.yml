@@ -1,5 +1,4 @@
-
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
 push:
@@ -8,7 +7,7 @@ pull_request:
 branches: [ main ]
 
 jobs:
-test:
+build-and-push:
 runs-on: ubuntu-latest
 
 steps:
@@ -42,3 +41,16 @@ steps:
     ignore-unfixed: true
     vuln-type: 'os,library'
     severity: 'CRITICAL,HIGH'
+
+- name: Log in to Docker Hub
+  uses: docker/login-action@v2
+  with:
+    username: ${{ secrets.DOCKERHUB_USERNAME }}
+    password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+- name: Build and Push Docker Image to Docker Hub
+  uses: docker/build-push-action@v4
+  with:
+    context: .
+    push: true
+    tags: ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:latest
