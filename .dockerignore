@@ -1,0 +1,15 @@
+
+.git
+
+.github
+
+pycache
+
+*.pyc
+
+*.pyo
+
+*.pyd
+
+.pytest_cache
+
