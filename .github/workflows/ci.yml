@@ -73,3 +73,9 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Send Discord Notification
+      uses: ilipak/discord-workflow-status@v1.2.0
+      if: always()
+      with:
+        webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
