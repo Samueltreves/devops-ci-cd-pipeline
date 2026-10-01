@@ -75,7 +75,10 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
 
     - name: Send Discord Notification
-      uses: ilipak/discord-workflow-status@v1.2.0
+      uses: sariaur/discord-action@v1
       if: always()
       with:
-        webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+        webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+        status: ${{ job.status }}
+        title: "CI/CD Pipeline Status"
+        description: "Build status for commit ${{ github.sha }}"
