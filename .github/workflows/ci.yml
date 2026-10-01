@@ -74,11 +74,10 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
-    - name: Send Discord Notification
-      uses: sariaur/discord-action@v1
+    - name: Send Discord Notification via curl
       if: always()
-      with:
-        webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-        status: ${{ job.status }}
-        title: "CI/CD Pipeline Status"
-        description: "Build status for commit ${{ github.sha }}"
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"content\": \"🚀 **CI/CD Pipeline Completed!**\n**Status:** ${{ job.status }}\n**Repository:** ${{ github.repository }}\n**Commit:** ${{ github.sha }}\"}" \
+             ${{ secrets.DISCORD_WEBHOOK }}
