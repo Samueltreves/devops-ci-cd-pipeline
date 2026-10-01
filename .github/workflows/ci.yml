@@ -1,75 +1,75 @@
 name: CI CD Pipeline
 
 on:
-push:
-branches: [ main ]
-tags: [ 'v*..' ]
-pull_request:
-branches: [ main ]
+  push:
+    branches: [ main ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-build-and-push:
-runs-on: ubuntu-latest
+  build-and-push:
+    runs-on: ubuntu-latest
 
-steps:
-- name: Checkout repository code
-  uses: actions/checkout@v3
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v3
 
-- name: Set up Python 3.10
-  uses: actions/setup-python@v4
-  with:
-    python-version: '3.10'
+    - name: Set up Python 3.10
+      uses: actions/setup-python@4
+      with:
+        python-version: '3.10'
 
-- name: Install dependencies
-  run: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-- name: Run automated unit tests
-  run: |
-    pytest
+    - name: Run automated unit tests
+      run: |
+        pytest
 
-- name: Build Docker Image locally for Trivy
-  run: |
-    docker build -t devops-app:latest .
+    - name: Build Docker Image locally for Trivy
+      run: |
+        docker build -t devops-app:latest .
 
-- name: Run Trivy Vulnerability Scanner
-  uses: aquasecurity/trivy-action@master
-  with:
-    image-ref: 'devops-app:latest'
-    format: 'table'
-    exit-code: '0'
-    ignore-unfixed: true
-    vuln-type: 'os,library'
-    severity: 'CRITICAL,HIGH'
+    - name: Run Trivy Vulnerability Scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'devops-app:latest'
+        format: 'table'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
 
-- name: Set up QEMU (for multi-architecture support)
-  uses: docker/setup-qemu-action@v2
+    - name: Set up QEMU (for multi-architecture support)
+      uses: docker/setup-qemu-action@v2
 
-- name: Set up Docker Buildx
-  uses: docker/setup-buildx-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-- name: Log in to Docker Hub
-  uses: docker/login-action@v2
-  with:
-    username: ${{ secrets.DOCKERHUB_USERNAME }}
-    password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${ secrets.DOCKERHUB_TOKEN }}
 
-- name: Extract Docker metadata (tags, labels)
-  id: meta
-  uses: docker/metadata-action@v4
-  with:
-    images: secrets.DOCKERHUBUSERNAME/devops-apptags:|type=raw,value=latest,enable={{ github.ref == 'refs/heads/main' }}
-      type=sha,format=short
-      type=semver,pattern={{version}}
+    - name: Extract Docker metadata (tags, labels)
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: 'three'{ { secrets.DOCKERHUB_USERNAME }}/devops-app
+        tags: |
+          type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+          type=sha,format=short
+          type=semver,pattern={{version}}
 
-- name: Build and Push Multi-Arch Docker Image
-  uses: docker/build-push-action@v4
-  with:
-    context: .
-    platforms: linux/amd64,linux/arm64
-    push: true
-    tags: ${{ steps.meta.outputs.tags }}
-    labels: ${{ steps.meta.outputs.labels }}
-
-
+    - name: Build and Push Multi-Arch Docker Image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${ steps.meta.outputs.tags }}
+        labels: 'three'{ { steps.meta.outputs.labels }}
